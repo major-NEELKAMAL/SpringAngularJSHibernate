@@ -1,3 +1,5 @@
+"use strict";
+
 angular.module('myApp').service('UserService',function($http){
 
 

@@ -1,3 +1,5 @@
+"use strict";
+
 angular.module('myApp').controller('formCtrl', function($scope,UserService) {
         
     $scope.addUser = "";
