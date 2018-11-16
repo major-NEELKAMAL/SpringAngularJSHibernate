@@ -4,11 +4,13 @@ package com.neelkamal.controller;
 
 
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-
-
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,21 +45,30 @@ public class UserController {
 	
 		
 	@RequestMapping(value= "/savePerson", method = RequestMethod.POST)
-	public @ResponseBody JsonObject addPerson(@RequestBody User p){
+	public @ResponseBody JsonObject addPerson(@Valid @RequestBody User p,BindingResult bindingResult ){
 		System.out.println(p);
 		
 		JsonObject json = new JsonObject();
 		
-		if(p.getId() == 0){
+		if (bindingResult.hasErrors()) {
+			for(FieldError error : bindingResult.getFieldErrors()){
+				json.addProperty(error.getField(), error.getDefaultMessage());
+			}
 			
-			userService.addUser(p);
-			json.addProperty("message", "user is added");
-			 
-		} else {
+		}  else {
 			
-			userService.updateUser(p);
-			json.addProperty("message", "user is updated");
+			if(p.getId() == 0){
+			
+				userService.addUser(p);
+				json.addProperty("message", "user is added");
 			 
+			} else {
+			
+				userService.updateUser(p);
+				json.addProperty("message", "user is updated");
+			 
+			}
+			
 		}
 		return json;
 	}
